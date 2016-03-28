@@ -51,7 +51,7 @@ class CdnCachePurgeCloudfrontPackage extends Package
     {
         $cloudfront = new CloudfrontCache();
         $cloudfront->createInvalidationRequest(array(
-            '/*'
+            DIR_REL . '*'
         ));
     }
 }
