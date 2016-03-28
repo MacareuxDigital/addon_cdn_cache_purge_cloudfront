@@ -49,9 +49,10 @@ class CdnCachePurgeCloudfrontPackage extends Package
     
     public function clearCloudFrontCache($cache)
     {
+        $base_path = (DIR_REL) ? DIR_REL : '/';
         $cloudfront = new CloudfrontCache();
         $cloudfront->createInvalidationRequest(array(
-            DIR_REL . '*'
+            $base_path . '*'
         ));
     }
 }
