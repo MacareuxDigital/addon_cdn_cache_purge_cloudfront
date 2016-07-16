@@ -1,8 +1,8 @@
 <?php
 namespace Concrete\Package\CdnCachePurgeCloudfront\Controller\SinglePage\Dashboard\System\Optimization;
 
-use Package;
 use Core;
+use Package;
 
 class Cloudfront extends \Concrete\Core\Page\Controller\DashboardPageController
 {

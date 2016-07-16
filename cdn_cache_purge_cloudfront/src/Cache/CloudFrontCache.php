@@ -9,12 +9,12 @@ class CloudFrontCache
     protected static $sdk_version = '2016-01-28';
     protected static $region = 'us-east-1';
     protected $client = null;
-    
+
     public static function getSdkVersion()
     {
         return self::$sdk_version;
     }
-    
+
     public static function getClient()
     {
         $pkg = Package::getByHandle('cdn_cache_purge_cloudfront');
@@ -22,17 +22,18 @@ class CloudFrontCache
         $accessSecret = $pkg->getFileConfig()->get('aws.cloudfront.access_secret');
         if ($accessKey && $accessSecret) {
             $cloudFront = new CloudFrontClient(array(
-                'region'  => self::$region,
+                'region' => self::$region,
                 'version' => self::$sdk_version,
                 'credentials' => array(
-                    'key'    => $accessKey,
+                    'key' => $accessKey,
                     'secret' => $accessSecret,
                 ),
             ));
+
             return $cloudFront;
         }
     }
-    
+
     public function __construct()
     {
         $client = static::getClient();
@@ -40,7 +41,7 @@ class CloudFrontCache
             $this->client = $client;
         }
     }
-    
+
     public function createInvalidationRequest($paths = array())
     {
         $pkg = Package::getByHandle('cdn_cache_purge_cloudfront');
@@ -57,6 +58,7 @@ class CloudFrontCache
                     'CallerReference' => time(),
                 ),
             ));
+
             return $result;
         }
     }

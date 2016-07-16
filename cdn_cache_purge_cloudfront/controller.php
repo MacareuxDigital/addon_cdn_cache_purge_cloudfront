@@ -1,10 +1,10 @@
 <?php
 namespace Concrete\Package\CdnCachePurgeCloudfront;
 
-use Package;
-use Events;
-use Concrete\Package\CdnCachePurgeCloudfront\Cache\CloudFrontCache;
 use Concrete\Core\Backup\ContentImporter;
+use Concrete\Package\CdnCachePurgeCloudfront\Cache\CloudFrontCache;
+use Events;
+use Package;
 
 class Controller extends Package
 {
@@ -36,7 +36,7 @@ class Controller extends Package
             $base_path = Core::getApplicationURL() . '/';
             $cloudfront = new CloudFrontCache();
             $cloudfront->createInvalidationRequest(array(
-                $base_path . '*'
+                $base_path . '*',
             ));
         });
     }
@@ -51,12 +51,13 @@ class Controller extends Package
         if (version_compare(PHP_VERSION, $this->phpVersionRequired, '<')) {
             throw new Exception(t('This package requires PHP %s or greater.', $this->phpVersionRequired));
         }
-        if (! file_exists($this->getPackagePath() . '/vendor/autoload.php')) {
+        if (!file_exists($this->getPackagePath() . '/vendor/autoload.php')) {
             throw new Exception(t('Required libraries not found.'));
         }
         $pkg = parent::install();
         $ci = new ContentImporter();
         $ci->importContentFile($pkg->getPackagePath() . '/config/dashboard.xml');
+
         return $pkg;
     }
 }
