@@ -1,8 +1,10 @@
 <?php
+namespace Concrete\Package\CdnCachePurgeCloudfront\Cache;
 
 use Aws\CloudFront\CloudFrontClient;
+use Package;
 
-class CloudfrontCache
+class CloudFrontCache
 {
     protected static $sdk_version = '2016-01-28';
     protected static $region = 'us-east-1';
@@ -15,13 +17,16 @@ class CloudfrontCache
     
     public static function getClient()
     {
-        if (defined('AWS_CLOUDFRONT_ACCESS_KEY') && defined('AWS_CLOUDFRONT_ACCESS_SECRET')) {
+        $pkg = Package::getByHandle('cdn_cache_purge_cloudfront');
+        $accessKey = $pkg->getFileConfig()->get('aws.cloudfront.access_key');
+        $accessSecret = $pkg->getFileConfig()->get('aws.cloudfront.access_secret');
+        if ($accessKey && $accessSecret) {
             $cloudFront = new CloudFrontClient(array(
                 'region'  => self::$region,
                 'version' => self::$sdk_version,
                 'credentials' => array(
-                    'key'    => AWS_CLOUDFRONT_ACCESS_KEY,
-                    'secret' => AWS_CLOUDFRONT_ACCESS_SECRET,
+                    'key'    => $accessKey,
+                    'secret' => $accessSecret,
                 ),
             ));
             return $cloudFront;
@@ -38,7 +43,9 @@ class CloudfrontCache
     
     public function createInvalidationRequest($paths = array())
     {
-        if (defined('AWS_CLOUDFRONT_DISTRIBUTION') && is_object($this->client) && count($paths) > 0) {
+        $pkg = Package::getByHandle('cdn_cache_purge_cloudfront');
+        $distributionId = $pkg->getFileConfig()->get('aws.cloudfront.distribution_id');
+        if ($distributionId && is_object($this->client) && count($paths) > 0) {
             /** @var \Aws\Result $result */
             $result = $this->client->createInvalidation(array(
                 'DistributionId' => AWS_CLOUDFRONT_DISTRIBUTION,

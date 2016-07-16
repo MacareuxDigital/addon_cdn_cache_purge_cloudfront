@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<concrete5-cif version="1.0">
+    <singlepages>
+        <page name="Amazon CloudFront"
+              path="/dashboard/system/optimization/cloudfront"
+              filename="/dashboard/system/optimization/cloudfront.php"
+              pagetype=""
+              description=""
+              package="cdn_cache_purge_cloudfront">
+            <attributes>
+                <attributekey handle="meta_keywords">
+                    <value>AWS, Access, Key, Secret, Distribution, CloudFront, Cache, Purge</value>
+                </attributekey>
+            </attributes>
+        </page>
+    </singlepages>
+</concrete5-cif>

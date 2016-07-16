@@ -1,16 +1,26 @@
 <?php
-defined('C5_EXECUTE') or die(_("Access Denied."));
+namespace Concrete\Package\CdnCachePurgeCloudfront;
 
-class CdnCachePurgeCloudfrontPackage extends Package
+use Package;
+use Events;
+use Concrete\Package\CdnCachePurgeCloudfront\Cache\CloudFrontCache;
+use Concrete\Core\Backup\ContentImporter;
+
+class Controller extends Package
 {
     protected $pkgHandle = 'cdn_cache_purge_cloudfront';
-    protected $appVersionRequired = '5.6.2';
-    protected $pkgVersion = '0.1';
+    protected $appVersionRequired = '5.7.5';
+    protected $pkgVersion = '0.9';
     protected $phpVersionRequired = '5.5.0';
+
+    /**
+     * @var bool Remove \Src from package namespace.
+     */
+    protected $pkgAutoloaderMapCoreExtensions = true;
 
     public function getPackageDescription()
     {
-        return t("Clears Cache via Amazon CloudFront API");
+        return t("Flushes Amazon CloudFront cache when you click Clear Cache button.");
     }
 
     public function getPackageName()
@@ -21,18 +31,19 @@ class CdnCachePurgeCloudfrontPackage extends Package
     public function on_start()
     {
         $this->registerAutoload();
-        
-        Events::extend('on_cache_flush', __CLASS__, 'clearCloudFrontCache', __FILE__);
+
+        Events::addListener('on_cache_flush', function () {
+            $base_path = Core::getApplicationURL() . '/';
+            $cloudfront = new CloudFrontCache();
+            $cloudfront->createInvalidationRequest(array(
+                $base_path . '*'
+            ));
+        });
     }
 
     protected function registerAutoload()
     {
-        $classes = array(
-            'CloudfrontCache' => array('library', 'cloudfront_cache', 'cdn_cache_purge_cloudfront')
-        );
-        Loader::registerAutoload($classes);
-
-        require_once(__DIR__ . '/vendor/autoload.php');
+        require $this->getPackagePath() . '/vendor/autoload.php';
     }
 
     public function install()
@@ -40,19 +51,12 @@ class CdnCachePurgeCloudfrontPackage extends Package
         if (version_compare(PHP_VERSION, $this->phpVersionRequired, '<')) {
             throw new Exception(t('This package requires PHP %s or greater.', $this->phpVersionRequired));
         }
-        if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
+        if (! file_exists($this->getPackagePath() . '/vendor/autoload.php')) {
             throw new Exception(t('Required libraries not found.'));
         }
         $pkg = parent::install();
+        $ci = new ContentImporter();
+        $ci->importContentFile($pkg->getPackagePath() . '/config/dashboard.xml');
         return $pkg;
-    }
-    
-    public function clearCloudFrontCache($cache)
-    {
-        $base_path = (DIR_REL) ? DIR_REL : '/';
-        $cloudfront = new CloudfrontCache();
-        $cloudfront->createInvalidationRequest(array(
-            $base_path . '*'
-        ));
     }
 }
