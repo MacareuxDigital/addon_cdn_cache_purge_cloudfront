@@ -4,17 +4,34 @@ namespace Concrete\Package\CdnCachePurgeCloudfront\Cache;
 use Aws\CloudFront\CloudFrontClient;
 use Package;
 
+/**
+ * Class CloudFrontCache
+ * @package Concrete\Package\CdnCachePurgeCloudfront\Cache
+ */
 class CloudFrontCache
 {
+    /** @var string AWS SDK version */
     protected static $sdk_version = '2016-01-28';
+
+    /** @var string AWS Region */
     protected static $region = 'us-east-1';
+
+    /** @var CloudFrontClient|null */
     protected $client = null;
 
+    /**
+     * Get supported AWS SDK version
+     * @return string
+     */
     public static function getSdkVersion()
     {
         return self::$sdk_version;
     }
 
+    /**
+     * Get AWS CloudFront Client instance
+     * @return CloudFrontClient
+     */
     public static function getClient()
     {
         $pkg = Package::getByHandle('cdn_cache_purge_cloudfront');
@@ -34,6 +51,9 @@ class CloudFrontCache
         }
     }
 
+    /**
+     * CloudFrontCache constructor.
+     */
     public function __construct()
     {
         $client = static::getClient();
@@ -42,6 +62,12 @@ class CloudFrontCache
         }
     }
 
+    /**
+     * Create invalidation request for cloudfront
+     * 
+     * @param array $paths Paths for invalidation request
+     * @return \Aws\Result
+     */
     public function createInvalidationRequest($paths = array())
     {
         $pkg = Package::getByHandle('cdn_cache_purge_cloudfront');

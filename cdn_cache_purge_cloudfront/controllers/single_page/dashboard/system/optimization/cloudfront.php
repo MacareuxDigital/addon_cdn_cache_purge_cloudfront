@@ -8,6 +8,7 @@ class Cloudfront extends \Concrete\Core\Page\Controller\DashboardPageController
 {
     public function view()
     {
+        /** @var \Concrete\Core\Package\Package $pkg */
         $pkg = Package::getByHandle('cdn_cache_purge_cloudfront');
         $accessKey = $pkg->getFileConfig()->get('aws.cloudfront.access_key');
         $accessSecret = $pkg->getFileConfig()->get('aws.cloudfront.access_secret');
@@ -44,6 +45,7 @@ class Cloudfront extends \Concrete\Core\Page\Controller\DashboardPageController
                 }
 
                 if (!$this->error->has()) {
+                    /** @var \Concrete\Core\Package\Package $pkg */
                     $pkg = Package::getByHandle('cdn_cache_purge_cloudfront');
                     $pkg->getFileConfig()->save('aws.cloudfront.access_key', $accessKey);
                     $pkg->getFileConfig()->save('aws.cloudfront.access_secret', $accessSecret);
