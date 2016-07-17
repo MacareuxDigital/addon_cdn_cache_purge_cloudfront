@@ -3,6 +3,7 @@ namespace Concrete\Package\CdnCachePurgeCloudfront;
 
 use Concrete\Core\Backup\ContentImporter;
 use Concrete\Package\CdnCachePurgeCloudfront\Cache\CloudFrontCache;
+use Concrete\Package\CdnCachePurgeCloudfront\Cache\CloudFrontCacheV2;
 use Core;
 use Events;
 use Package;
@@ -63,11 +64,17 @@ class Controller extends Package
      */
     public function on_start()
     {
-        $this->registerAutoload();
+        // If other package (e.g. S3 Storage) uses api version v2, avoid autoloading v3 sdk
+        if ($this->getFileConfig()->get('aws.cloudfront.api_version') == 2) {
+            $cloudfront = new CloudFrontCacheV2();
+        } else {
+            $this->registerAutoload();
 
-        Events::addListener('on_cache_flush', function () {
-            $base_path = Core::getApplicationRelativePath() . '/';
             $cloudfront = new CloudFrontCache();
+        }
+
+        Events::addListener('on_cache_flush', function () use ($cloudfront) {
+            $base_path = Core::getApplicationRelativePath() . '/';
             $cloudfront->createInvalidationRequest(array(
                 $base_path . '*',
             ));
