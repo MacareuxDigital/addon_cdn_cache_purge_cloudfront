@@ -3,6 +3,7 @@ namespace Concrete\Package\CdnCachePurgeCloudfront;
 
 use Concrete\Core\Backup\ContentImporter;
 use Concrete\Package\CdnCachePurgeCloudfront\Cache\CloudFrontCache;
+use Core;
 use Events;
 use Package;
 
