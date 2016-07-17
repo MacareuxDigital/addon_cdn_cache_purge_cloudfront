@@ -64,14 +64,7 @@ class Controller extends Package
      */
     public function on_start()
     {
-        // If other package (e.g. S3 Storage) uses api version v2, avoid autoloading v3 sdk
-        if ($this->getFileConfig()->get('aws.cloudfront.api_version') == 2) {
-            $cloudfront = new CloudFrontCacheV2();
-        } else {
-            $this->registerAutoload();
-
-            $cloudfront = new CloudFrontCache();
-        }
+        $cloudfront = $this->getHelper();
 
         Events::addListener('on_cache_flush', function () use ($cloudfront) {
             $base_path = Core::getApplicationRelativePath() . '/';
@@ -79,6 +72,27 @@ class Controller extends Package
                 $base_path . '*',
             ));
         });
+    }
+
+    /**
+     * Get CloudFrontCache Helper Class
+     * 
+     * @return CloudFrontCache|CloudFrontCacheV2
+     */
+    protected function getHelper()
+    {
+        // If other package (e.g. S3 Storage) uses api version v2, avoid autoloading v3 sdk
+        if ($this->getFileConfig()->get('aws.cloudfront.api_version') == 2) {
+            $cloudfront = new CloudFrontCacheV2();
+        } else {
+            if ($this->getFileConfig->get('aws.cloudfront.autoload') == 'disable') {
+                $this->registerAutoload();
+            }
+
+            $cloudfront = new CloudFrontCache();
+        }
+
+        return $cloudfront;
     }
 
     /**
