@@ -65,7 +65,7 @@ class Controller extends Package
         $this->registerAutoload();
 
         Events::addListener('on_cache_flush', function () {
-            $base_path = Core::getApplicationURL() . '/';
+            $base_path = Core::getApplicationRelativePath() . '/';
             $cloudfront = new CloudFrontCache();
             $cloudfront->createInvalidationRequest(array(
                 $base_path . '*',
