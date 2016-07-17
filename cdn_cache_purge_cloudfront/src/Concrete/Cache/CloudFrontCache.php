@@ -75,7 +75,7 @@ class CloudFrontCache
         if ($distributionId && is_object($this->client) && count($paths) > 0) {
             /** @var \Aws\Result $result */
             $result = $this->client->createInvalidation(array(
-                'DistributionId' => AWS_CLOUDFRONT_DISTRIBUTION,
+                'DistributionId' => $distributionId,
                 'InvalidationBatch' => array(
                     'Paths' => array(
                         'Quantity' => count($paths),
