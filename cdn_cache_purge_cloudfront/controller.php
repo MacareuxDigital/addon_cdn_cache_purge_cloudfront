@@ -27,7 +27,7 @@ class Controller extends Package
     /**
      * @var string Package version.
      */
-    protected $pkgVersion = '0.9';
+    protected $pkgVersion = '0.9.1';
 
     /**
      * @var string Required PHP version.
@@ -76,7 +76,7 @@ class Controller extends Package
 
     /**
      * Get CloudFrontCache Helper Class
-     * 
+     *
      * @return CloudFrontCache|CloudFrontCacheV2
      */
     protected function getHelper()
