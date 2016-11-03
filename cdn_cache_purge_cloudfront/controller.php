@@ -85,7 +85,7 @@ class Controller extends Package
         if ($this->getFileConfig()->get('aws.cloudfront.api_version') == 2) {
             $cloudfront = new CloudFrontCacheV2();
         } else {
-            if ($this->getFileConfig()->get('aws.cloudfront.autoload') == 'disable') {
+            if ($this->getFileConfig()->get('aws.cloudfront.autoload') !== 'disable') {
                 $this->registerAutoload();
             }
 
