@@ -27,7 +27,7 @@ class Controller extends Package
     /**
      * @var string Package version.
      */
-    protected $pkgVersion = '0.9.2';
+    protected $pkgVersion = '0.9.3';
 
     /**
      * @var string Required PHP version.
