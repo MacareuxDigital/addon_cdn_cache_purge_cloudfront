@@ -10,7 +10,10 @@
         </div>
         <div class="form-group">
             <?php echo $form->label('accessSecret', t('Access Secret')); ?>
-            <?php echo $form->text('accessSecret', $accessSecret); ?>
+            <div class="input-group">
+                <?php echo $form->password('accessSecret', $accessSecret); ?>
+                <a href="#" id="showAccessSecret" class="input-group-addon"><?=t('Display')?></a>
+            </div>
             <p class="help-block"><?php echo t('Enter the security credentials to verify whether you have permission to access. To see your Access Key & Secret, visit AWS IAM console.'); ?></p>
         </div>
         <legend><?php echo t('CloudFront'); ?></legend>
@@ -26,3 +29,11 @@
         </div>
     </div>
 </form>
+<script type="text/javascript">
+    $(function() {
+        $('#showAccessSecret').click(function (e) {
+            e.preventDefault();
+            $('#accessSecret').prop('type', 'text');
+        });
+    });
+</script>
