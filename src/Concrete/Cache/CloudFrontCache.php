@@ -11,7 +11,7 @@ use Package;
 class CloudFrontCache
 {
     /** @var string AWS SDK version */
-    protected static $sdk_version = '2016-01-28';
+    protected static $sdk_version = '2017-03-25';
 
     /** @var string AWS Region */
     protected static $region = 'us-east-1';
