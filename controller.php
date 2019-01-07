@@ -1,6 +1,7 @@
 <?php
 namespace Concrete\Package\CdnCachePurgeCloudfront;
 
+use Aws\CloudFront\CloudFrontClient;
 use Concrete\Core\Backup\ContentImporter;
 use Concrete\Package\CdnCachePurgeCloudfront\Cache\CloudFrontCache;
 use Concrete\Package\CdnCachePurgeCloudfront\Cache\CloudFrontCacheV2;
@@ -27,7 +28,7 @@ class Controller extends Package
     /**
      * @var string Package version.
      */
-    protected $pkgVersion = '0.9.4';
+    protected $pkgVersion = '0.9.5';
 
     /**
      * @var string Required PHP version.
@@ -100,7 +101,10 @@ class Controller extends Package
      */
     protected function registerAutoload()
     {
-        require $this->getPackagePath() . '/vendor/autoload.php';
+        // Check if the class already exists by another package. e.g.- S3_storage
+        if (!class_exists(CloudFrontClient::class)) {
+            require $this->getPackagePath() . '/vendor/autoload.php';
+        }
     }
 
     /**
@@ -108,16 +112,27 @@ class Controller extends Package
      */
     public function install()
     {
-        if (version_compare(PHP_VERSION, $this->phpVersionRequired, '<')) {
-            throw new Exception(t('This package requires PHP %s or greater.', $this->phpVersionRequired));
-        }
-        if (!file_exists($this->getPackagePath() . '/vendor/autoload.php')) {
-            throw new Exception(t('Required libraries not found.'));
-        }
+        $this->checkCompatibilities();
         $pkg = parent::install();
         $ci = new ContentImporter();
         $ci->importContentFile($pkg->getPackagePath() . '/config/dashboard.xml');
 
         return $pkg;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function checkCompatibilities()
+    {
+        // Check PHP version compatibility
+        if (version_compare(PHP_VERSION, $this->phpVersionRequired, '<')) {
+            throw new Exception(t('This package requires PHP %s or greater.', $this->phpVersionRequired));
+        }
+
+        // Check required libraries
+        if (!class_exists(CloudFrontClient::class) && !file_exists($this->getPackagePath() . '/vendor/autoload.php')) {
+            throw new Exception(t('Required libraries not found.'));
+        }
     }
 }
