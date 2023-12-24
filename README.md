@@ -6,7 +6,7 @@ Flushes Amazon CloudFront cache when you click Clear Cache button.
 
 ```bash
 $ cd ./packages
-$ git clone git@github.com:hissy/addon_cloudfront_cache_purge.git cdn_cache_purge_cloudfront
+$ git clone git@github.com:MacareuxDigital/addon_cdn_cache_purge_cloudfront.git cdn_cache_purge_cloudfront
 $ cd cdn_cache_purge_cloudfront
 $ composer install
 $ cd ../../
